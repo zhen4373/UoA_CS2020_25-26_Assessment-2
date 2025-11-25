@@ -1,0 +1,42 @@
+Basic system (30 pts)
+
+10 pts: user enters three (or more) income fields (wages, loan, other) and the system computes total income when a Calculate button is pressed.
+10 分：使用者輸入三個（或更多）收入欄位（薪資、貸款、其他），點擊「計算」按鈕後，系統計算總收入。
+//Done
+
+10 pts: user enters three (or more) spending fields (food, rent, other) and the system computes total income when a Calculate button is pressed.
+10 分：使用者輸入三個（或更多）支出欄位（食物、房租、其他），點選「計算」按鈕後，系統計算總收入。
+//Done
+
+5 pts: When Calculate is pressed, the system also shows surplus/deficit (income minus spending). This is black if positive or zero, and red if negative.
+5 分：點選「計算」按鈕後，系統也會顯示盈餘/赤字（收入減去支出）。盈餘/赤字為正數或零時顯示為黑色，為負數時顯示為紅色。
+//Done
+
+5 pts: System checks user input (numbers for validity), and produces an appropriate error message if input is not valid. Empty fields are treated as 0 (no error message)
+5 分：系統檢查使用者輸入（數字的有效性），如果輸入無效，則顯示對應的錯誤訊息。空白欄位視為 0（不顯示錯誤訊息）。
+//Done
+
+
+Extensions (20 pts)
+
+10 pts: allow users to specify income/expenditure numbers per week, per month, or per year, for each input field. This requires both adding appropriate choice widgets (such as combo boxes), and also modifying the way you calculate totals. You can assume that there are 52 weeks in a year, 12 months in a year, and 4.3333333 weeks in a month.
+10 分：允許使用者為每個輸入欄位指定每週、每月或每年的收入/支出金額。這需要新增合適的選擇控制項（例如組合方塊），並修改總計的計算方式。您可以假設一年有 52 週，12 個月，一個月有 4.3333333 週。
+//Done
+
+10 pts: implement “spreadsheet” behaviour, that is totals are updated whenever the user changes a number or time-period, with no need to press a calculate button. You should update whenever the focus shifts, as well as whenever an action is performed.
+10 分：實現「電子表格」行為，即當使用者更改數字或時間段時，總計會自動更新，無需點擊「計算」按鈕。您應該在焦點轉移以及執行操作時進行更新。
+
+
+Undo (30 pts)
+
+10 pts: implement a single-level of Undo, so the user can “undo” his or her most recent action. This require saving the state of the system (ie, all numbers) when a change is made.
+10 分：實作單級撤銷功能，以便使用者可以撤銷最近的操作。這需要在進行更改時保存系統狀態（即所有數字）。
+
+10 pts: implement multiple Undo, so the user can undo multiple actions. We recommend that you create a class to hold state information numbers, and then maintain a stack of states.
+10 分：實現多層撤銷功能，以便使用者可以撤銷多個操作。我們建議您建立一個類別來保存狀態資訊數字，然後維護一個狀態堆疊 
+
+10 pts: Good collection of JUnit tests for Undo
+
+Programming style (20 pts)
+10 pts: Java code follows good coding style, including good code comments and variable names
+10 pts: Java code is well structured and decomposed into methods
