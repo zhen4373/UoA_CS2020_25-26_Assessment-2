@@ -132,7 +132,7 @@ public class BudgetTool extends JPanel {
         update_CHB_states();          //initial state
         tinp_state();                 //initial state
         //
-    }
+}
     private void setupUi() {
         layouConstraints.insets = new Insets(5, 5, 5, 5);
         layouConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -383,44 +383,41 @@ public class BudgetTool extends JPanel {
 
     }
     private void undo_input_part(){
-        for (int i = 0; i < run_timeList.get(run_timeList.size()-1); i++) { // get the last item from run_timeList, maximum should be 3 times
-            System.out.println("---undo loop:---"+(i+1));//only for debug
-            
-            int HIT=historyTableModel.getRowCount()-1;
-            System.out.println(HIT+"---get row done");//only for debug
+        int lastTransactionSize = run_timeList.get(run_timeList.size() - 1);
+        for (int i = 0; i < lastTransactionSize; i++) {
+            int lastRowIndex = historyTableModel.getRowCount() - 1;
+            if (lastRowIndex < 0) break; // Safety break
 
-            String freq_undo = historyTableModel.getValueAt(HIT , 1).toString();// frequency in history table
-            System.out.println(freq_undo+"---get freq done");//only for debug
-            
-            String type_undo = historyTableModel.getValueAt(HIT, 2).toString();// type in history table
-            System.out.println(type_undo+"---get type done");//only for debug
+            String freq_undo = historyTableModel.getValueAt(lastRowIndex, 1).toString();
+            String type_undo = historyTableModel.getValueAt(lastRowIndex, 2).toString();
+            String value_str_undo = historyTableModel.getValueAt(lastRowIndex, 3).toString();
 
-            String value_undo = historyTableModel.getValueAt(HIT, 3).toString();// value in history table
-            System.out.println(value_undo+"---get value done");//only for debug
+            double value_to_undo = Double.parseDouble(value_str_undo);
+            total_balance -= value_to_undo;
 
-            int row_num_undo = his_row_number.get(his_row_number.size() -1);                                //get previous row number of text field(3 in total)
-            System.out.println(row_num_undo+"---get row num done");//only for debug
+            int row_num_undo = his_row_number.get(his_row_number.size() - 1);
 
-            String balance_undo = historyTableModel.getValueAt(HIT, 4).toString();// balance in history table
-            System.out.println(balance_undo+"---get balance done");//only for debug
-            total_balance+=Double.parseDouble(balance_undo);
-            
+            String absolute_value_str = String.format("%.2f", Math.abs(value_to_undo));
+            set_previous_text(row_num_undo, freq_undo, type_undo, absolute_value_str);
 
-            set_previous_text(row_num_undo, freq_undo, type_undo, value_undo);
-
-            System.out.println("set text---finish:"+i);//only for debug
-            historyTableModel.removeRow(historyTableModel.getRowCount() - 1);//remove previous row
-            his_row_number.remove(his_row_number.size()-1);//remove previous row number
+            historyTableModel.removeRow(lastRowIndex);
+            his_row_number.remove(his_row_number.size() - 1);
         }
-        run_timeList.remove(run_timeList.size()-1);
+        run_timeList.remove(run_timeList.size() - 1);
     }
 
     private void undo(){
+        if (run_timeList.isEmpty()) return;
         Undoing = true;//disable calculate(record) button
+        clear();
         undo_selection_and_time_part();
         undo_input_part();//set previous input
+        finance_update(total_balance);
+        calculate();
         Undoing = false;//enable calculate(record) button
-        
+        update_CHB_states();
+        update_calculate_button_state();
+
     }
     //undo
 
