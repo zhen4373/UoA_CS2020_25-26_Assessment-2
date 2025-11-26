@@ -325,7 +325,7 @@ public class BudgetTool extends JPanel {
 
 
     //undo
-    private void set_previous_text(int row_num, String freq, String type, String value){
+    private void set_previous_text(int row_num, String freq, String type, String value){//need to based on frequency to chnage the value back!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         switch (row_num) {
             case 1 -> {
                 System.out.println("set text---row1:"+value);//only for debug
@@ -557,7 +557,7 @@ public class BudgetTool extends JPanel {
     private String edited_time(){ // return input time, no need to check format, since invalid format will be blocked by unable calculate button
         return numInput4.getText();
     }
-    private boolean input_time_check(){ //need develop for more precise check
+    private boolean input_time_check(){ //need develop for more precise check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         try{
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm");
             formatter.parse(numInput4.getText());
