@@ -41,9 +41,9 @@ public class BudgetTool extends JPanel {
     private final java.util.List<String> n1 = new java.util.ArrayList<>();
     private final java.util.List<String> n2 = new java.util.ArrayList<>();
     private final java.util.List<String> n3 = new java.util.ArrayList<>();
-    private java.util.List<String> selection_Records = new java.util.ArrayList<>();//store selection records
-    private java.util.List<Integer> his_row_number = new java.util.ArrayList<>();//store history row number, direct relate with history table
-    private java.util.List<Integer> run_timeList = new java.util.ArrayList<>();//store undo index value
+    private final java.util.List<String> selection_Records = new java.util.ArrayList<>();//store selection records
+    private final java.util.List<Integer> his_row_number = new java.util.ArrayList<>();//store history row number, direct relate with history table
+    private final java.util.List<Integer> run_timeList = new java.util.ArrayList<>();//store undo index value
     //
     { // initial list for label and selete, put here can easily change the order
         //lable
