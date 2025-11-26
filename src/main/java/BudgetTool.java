@@ -35,7 +35,8 @@ public class BudgetTool extends JPanel {
     private double total_balance=0;
     //freq selector
     private JComboBox<String> freqSelector1,freqSelector2,freqSelector3;
-    
+    //Time format
+    private final String time_format = "yyyy/MM/dd HH:mm";
     //list for label and seleter
     private final java.util.List<String> n1 = new java.util.ArrayList<>();
     private final java.util.List<String> n2 = new java.util.ArrayList<>();
@@ -108,7 +109,6 @@ public class BudgetTool extends JPanel {
             }
         });
         Selector2.addActionListener(e -> {
-            numInput4.setText("");//clear input area when select time
             tinp_state();//if pick "now", it will set input area to current time and disable input area
         });
 
@@ -120,6 +120,9 @@ public class BudgetTool extends JPanel {
             his_finish_edit_Button.setEnabled(false);
             his_edit_Button.setEnabled(true);
         });
+        freqSelector1.addActionListener(e -> calculate());
+        freqSelector2.addActionListener(e -> calculate());
+        freqSelector3.addActionListener(e -> calculate());
         // DocumentListener
         input_listener(numInput1, errorLable1);
         input_listener(numInput2, errorLable2);
@@ -239,8 +242,8 @@ public class BudgetTool extends JPanel {
         JScrollPane scrollPane = new JScrollPane(historyTable);
         addComponent(scrollPane, Integer.parseInt(n3.get(8)), 0, 5, 10);
     }
-
-    private void update_calculate_button_state(){      //run when error_massage() activate
+    //state change and error check
+    private void update_calculate_button_state(){      //run when error_massage() activate, making sure number_input are not empty and valid
         String text1 = numInput1.getText();
         String text2 = numInput2.getText();
         String text3 = numInput3.getText();
@@ -274,10 +277,10 @@ public class BudgetTool extends JPanel {
         }
         else if (label.equals(errorLabel4)){ //specific for time, output time error message
             if (input_time_check()){
-                label.setText("Fromat:yyyy:MM:dd HH:mm");
+                label.setText("Valid");
             }
             else{
-                label.setText("Valid Format:yyyy:MM:dd HH:mm");
+                label.setText("Valid Format is "+time_format);
             }
         }
         else if (error_check(input.getText())) {//clear input1 and 2 error message
@@ -307,8 +310,7 @@ public class BudgetTool extends JPanel {
         }
         });
     }
-
-    private boolean collum_label_valid() {
+    private boolean collum_label_valid() {//for row 3 label, check if label is empty or not
         if (collum3Label.getText().isEmpty()){  // check if label is empty
             return false;
         }
@@ -321,33 +323,23 @@ public class BudgetTool extends JPanel {
         }
         //
     }
-
+    //state change and error check
 
     //undo
     private void set_previous_text(int row_num, String freq, String type, String value){//need to based on frequency to chnage the value back!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         switch (row_num) {
             case 1 -> {
-                System.out.println("set text---row1:"+value);//only for debug
-                numInput1.setText(value);
-                System.out.println(value+"---set text done");//only for debug
+                numInput1.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector1.setSelectedItem(freq);
-                System.out.println(freq+"set freq done");//only for debug
             }
             case 2 -> {
-                System.out.println("set text---row2:"+value);//only for debug
-                numInput2.setText(value);
-                System.out.println(value+"---set text done");//only for debug
+                numInput2.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector2.setSelectedItem(freq);
-                System.out.println(freq+"set freq done");//only for debug
             }
             case 3 -> {
-                System.out.println("set text---row3:"+value);//only for debug
-                numInput3.setText(value);
-                System.out.println(value+"---set text done");//only for debug
+                numInput3.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector3.setSelectedItem(freq);
-                System.out.println(freq+"set freq done");//only for debug
                 collum3Label.setText(type);
-                System.out.println(type+"set type done");//only for debug
             }
             default -> System.out.println("error for undo(set_previous_text)");//only for debug
         }
@@ -420,7 +412,7 @@ public class BudgetTool extends JPanel {
     }
     //undo
 
-    private double getNormalizedAmount(JTextField input, JComboBox<String> frequencySelector) { // need changes
+    private double normalize(JTextField input, JComboBox<String> frequencySelector) { // need changes
         String text = input.getText();
         if (text.isEmpty()) {
             return 0;
@@ -444,6 +436,19 @@ public class BudgetTool extends JPanel {
         }
     }
 
+    private String anti_normalize(double value, String frequency) {
+        switch (frequency) {
+            case "Per Week":
+                return String.format("%.2f", value / 4.333333333333333);
+            case "Per Year":
+                return String.format("%.2f", value * 12);
+            case "Per Month":
+                return String.format("%.2f", value);
+            case "One-Time":
+            default:
+                return String.format("%.2f", value);
+        }
+    }
     private void clear(){   // just clear input area and result area. Error lable will auto update when input change, therefore no need to update here
         numInput1.setText("");
         numInput2.setText("");
@@ -456,14 +461,15 @@ public class BudgetTool extends JPanel {
         freqSelector2.setSelectedIndex(0);
         freqSelector3.setSelectedIndex(0);
         calculate();//since above code set each input to null, therefore resultArea will be +0.00 or -0.00
+        finance_update(total_balance);
     } 
 
     //calculate
     private void calculate(){ // only involve result area, not involve history
         String seletion = (String) Selector1.getSelectedItem();
-        double num1 = getNormalizedAmount(numInput1, freqSelector1);
-        double num2 = getNormalizedAmount(numInput2, freqSelector2);
-        double num3 = getNormalizedAmount(numInput3, freqSelector3);
+        double num1 = normalize(numInput1, freqSelector1);
+        double num2 = normalize(numInput2, freqSelector2);
+        double num3 = normalize(numInput3, freqSelector3);
         double total = num1 + num2 + num3;
         if (seletion.equals("Income")){
             resultArea.setText(String.format("+%.2f", total));
@@ -487,15 +493,15 @@ public class BudgetTool extends JPanel {
         String seletion = (String) Selector1.getSelectedItem();
         double sign = seletion.equals("Expenditure") ? -1 : 1;
 
-        double num1 = getNormalizedAmount(numInput1, freqSelector1);
+        double num1 = normalize(numInput1, freqSelector1);
         String type1 = collum1Label.getText();
         String fre1= (String) freqSelector1.getSelectedItem();
 
-        double num2 = getNormalizedAmount(numInput2, freqSelector2);
+        double num2 = normalize(numInput2, freqSelector2);
         String type2 = collum2Label.getText();
         String fre2= (String) freqSelector2.getSelectedItem();
 
-        double num3 = getNormalizedAmount(numInput3, freqSelector3);
+        double num3 = normalize(numInput3, freqSelector3);
         String type3 = collum3Label.getText();
         String fre3= (String) freqSelector3.getSelectedItem();
 
@@ -518,7 +524,7 @@ public class BudgetTool extends JPanel {
     }
     private void History_record_template(String type, double num, double total, String freq, int row_number){//type, number, balance, frequency, row number(to store which row user input)
         String time = tinp_state();
-        String value = String.format("%s"+num, num > 0 ? "+" : "");
+        String value = String.format("%s%.2f", num > 0 ? "+" : "", num);
         String totalStr = String.format("%.2f", total);
 
         historyTableModel.addRow(new Object[]{time, freq, type, value, totalStr});//store history
@@ -549,17 +555,18 @@ public class BudgetTool extends JPanel {
     
     //Time
     private String Now_time(){ // return current time, format: yyyy:MM:dd HH:mm
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat(time_format);
         Date date = new Date();
         return formatter.format(date);
     }
     private String edited_time(){ // return input time, no need to check format, since invalid format will be blocked by unable calculate button
         return numInput4.getText();
     }
-    private boolean input_time_check(){ //need develop for more precise check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private boolean input_time_check(){ //format check for time input
         try{
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm");
-            formatter.parse(numInput4.getText());
+            SimpleDateFormat formatter = new SimpleDateFormat(time_format);//set accept format
+            String input = numInput4.getText();//get input
+            formatter.parse(input); //parse input, if invalid format, will throw exception
             return true;
         }
         catch(ParseException e){
@@ -575,7 +582,7 @@ public class BudgetTool extends JPanel {
         } 
         else if (Selector2.getSelectedItem().equals(n1.get(4))) {
             numInput4.setEditable(true);
-            errorLabel4.setText("Fromat:yyyy:MM:dd HH:mm");
+            errorLabel4.setText("Format:"+time_format);
             return edited_time();
         }
         else {
