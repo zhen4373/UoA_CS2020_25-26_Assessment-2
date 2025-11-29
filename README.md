@@ -12,21 +12,30 @@
 *   **Financial Summary**:
     *   A "Total (per month)" area shows a preview of the monthly impact of the current inputs.
     *   A running "Total Balance" is maintained and displayed, along with a status label ("Surplus", "Deficit", or "Balanced") that changes color for better visibility.
-*   **History Management**:
+*   **History Table**:
     *   All recorded transactions are stored in a `JTable`.
     *   Users can clear the entire transaction history.
-*   **Undo Functionality**:
+*   **Undo**:
     *   A single-level "Undo" feature allows the user to revert the most recent recording action.
     *   This restores the application's state by removing the last transaction(s) from the history, reverting the total balance, and repopulating the input fields with the undone values.
 
 
 ### Completed Features:
-*   **Basic UI & Layout (20 pts)**: The application has a functional UI with all the required input fields, labels, buttons, and selectors laid out.
-*   **Income vs Expenditure (10 pts)**: The UI correctly switches between "Income" and "Expenditure" views, updating labels accordingly.
-*   **Error Checking (10 pts)**: The application validates numerical inputs and prevents recording if the data is invalid. The time input field also has robust format and date validity checking.
-*   **Clear Button (5 pts)**: The "Clear" button successfully resets all input fields to their default state.
-*   **History Log (10 pts)**: A history table correctly logs all recorded transactions.
-*   **Total Balance (10 pts)**: The application accurately calculates and displays a running total balance.
-*   **Single-Level Undo (10 pts)**: The "Undo" button correctly reverts the last transaction, restoring the previous state of the application, including the total balance and input fields.
-*   **Frequency Calculation (10 pts)**: The logic to normalize values based on frequency ("Per Week", "Per Year") is implemented in the `getNormalizedAmount` method, although its integration into the main calculation preview (`calculate` method) is partial.
-*   **Custom Time Entry (5 pts)**: Users can select "Other" for time and enter a custom date and time, which is validated.
+*  **Basic system (30 pts)**:
+    *   User enters three (or more) income fields (wages, loan, other) and the system computes total income when a Calculate button is pressed.
+    *   User enters three (or more) expenditure fields (food, rent, other) and the system computes total expenditure when a Calculate button is pressed.
+    *   When Calculate is pressed, the system also shows surplus/deficit (income minus spending). This is black if positive or zero, and red if negative.
+    *   System checks user input (numbers for validity), and produces an appropriate error message if input is not valid. Empty fields are treated as 0 (no error message).
+
+*  **Extensions (20 pts)**:
+    *   Allow users to specify income/expenditure numbers per week, per month, or per year, for each input field. This requires both adding appropriate choice widgets (such as combo boxes), and also modifying the way you calculate totals. You can assume that there are 52 weeks in a year, 12 months in a year, and 4.3333333 weeks in a month.
+    *   Implement “spreadsheet” behaviour, that is totals are updated whenever the user changes a number or time-period, with no need to press a calculate button. You should update whenever the focus shifts, as well as whenever an action is performed.
+
+*   **Undo (30 pts)**:
+    *   Implement a single-level of Undo, so the user can “undo” his or her most recent action. This require saving the state of the system (ie, all numbers) when a change is made.
+    *   Implement multiple Undo, so the user can undo multiple actions. We recommend that you create a class to hold state information numbers, and then maintain a stack of states.
+    *   Good collection of JUnit tests for the Undo feature.
+
+*   **Programming style (20 pts)**:
+    *   Java code follows good coding style, including good code comments and variable names
+    *   Java code is well structured and decomposed into methods
