@@ -213,7 +213,7 @@ public class BudgetTool extends JPanel {
         //group(6)
         undoButton = new JButton("Undo");
         addComponent(undoButton, Integer.parseInt(n3.get(6)), 0, 1);
-        calculateButton = new JButton("Rcord");
+        calculateButton = new JButton("Record");
         addComponent(calculateButton, Integer.parseInt(n3.get(6)), 1, 1);
         clearButton = new JButton("Clear");
         addComponent(clearButton, Integer.parseInt(n3.get(6)), 2, 1);
@@ -345,6 +345,10 @@ public class BudgetTool extends JPanel {
         }
     }
     private void undo_selection_and_time_part(){ //done recently
+        if (selection_Records.size() < 2 && historyTableModel.getRowCount() <=0){// prevent undo when no previous selection
+            System.err.println("No previous selection, no need to undo");
+            return;
+        }
         String time_undo = historyTableModel.getValueAt(historyTableModel.getRowCount() -1, 0).toString(); // time in history table
         System.out.println(time_undo+"---get time done");//only for debug
         String selection_1= selection_Records.get(selection_Records.size() -2);// get previous selection(income or expenditure)
@@ -354,23 +358,17 @@ public class BudgetTool extends JPanel {
         
         // selection part, include time input
         Selector1.setSelectedItem(selection_1);//set previous selection(income or expenditure)
-        System.out.println(selection_1+"set selection done");//only for debug
 
         if (!selection_2.equals(n2.get(2))){//check previous selection is equal 'now' or 'other'
-            System.out.println("P_S =other");//only for debug
             Selector2.setSelectedItem(selection_2);// if not equal, set to previous selection
             numInput4.setText(time_undo);          // set to previous time
         }
         else{
-            System.out.println("P_S =now");//only for debug
             Selector2.setSelectedItem(n2.get(2));// set to 'now', auto update to current time, so no need to update here  
         }
         //remove last 2 item , -1 is time, -2 is selection(income or expenditure)
-        for (int i = 0; i < 2; i++){    
-            System.out.println("---remove item:---"+selection_Records.get(selection_Records.size()-1));//only for debug
-            selection_Records.remove(selection_Records.size()-1); 
-            System.out.println("---remove done:---"+i);//only for debug
-          }
+        selection_Records.remove(selection_Records.size()-1); // remove time
+        selection_Records.remove(selection_Records.size()-1); // remove selection(income or expenditure)
 
     }
     private void undo_input_part(){
@@ -554,7 +552,7 @@ public class BudgetTool extends JPanel {
     //HIstry
     
     //Time
-    private String Now_time(){ // return current time, format: yyyy:MM:dd HH:mm
+    private String Now_time(){ // return current time
         SimpleDateFormat formatter = new SimpleDateFormat(time_format);
         Date date = new Date();
         return formatter.format(date);
