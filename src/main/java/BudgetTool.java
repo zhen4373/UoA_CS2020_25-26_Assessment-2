@@ -19,7 +19,7 @@ public class BudgetTool extends JPanel {
     private JLabel collum1Label,collum2Label;
     private JTextField collum3Label,numInput1,numInput2,numInput3,numInput4;
     private JLabel errorLable1,errorLable2,errorLable3;
-    private JComboBox<String> Selector2; // TIme
+    private JComboBox<String> Selector2; // Time
     //result arear
     private JLabel resultLabel;
     private JTextArea resultArea;
@@ -30,17 +30,18 @@ public class BudgetTool extends JPanel {
     private JLabel his_Label;
     private JTable historyTable;
     private DefaultTableModel historyTableModel;
-    private JButton his_edit_Button, his_finish_edit_Button;
+    private JButton his_edit_Button, his_finish_edit_Button;// history edit button, not in use
 
     private double total_balance=0;
     //freq selector
     private JComboBox<String> freqSelector1,freqSelector2,freqSelector3;
     //Time format
     private final String time_format = "yyyy/MM/dd HH:mm";
-    //list for label and seleter
-    private final java.util.List<String> n1 = new java.util.ArrayList<>();
-    private final java.util.List<String> n2 = new java.util.ArrayList<>();
-    private final java.util.List<String> n3 = new java.util.ArrayList<>();
+    //List
+    private final java.util.List<String> n1 = new java.util.ArrayList<>();//store finance type label(other are also include so it also usef for other function)
+    private final java.util.List<String> n2 = new java.util.ArrayList<>();//store income or expenditure selector
+    private final java.util.List<String> n3 = new java.util.ArrayList<>();//store position order in UI
+    //
     private final java.util.List<String> selection_Records = new java.util.ArrayList<>();//store selection records
     private final java.util.List<Integer> his_row_number = new java.util.ArrayList<>();//store history row number, direct relate with history table
     private final java.util.List<Integer> run_timeList = new java.util.ArrayList<>();//store undo index value
@@ -77,21 +78,21 @@ public class BudgetTool extends JPanel {
     }
 
     private void initListeners() {
-        exitButton.addActionListener(e -> System.exit(0));
-        clearButton.addActionListener(e -> clear());
-        undoButton.addActionListener(e -> undo());
+        exitButton.addActionListener(e -> System.exit(0));//exit button
+        clearButton.addActionListener(e -> clear());//clear button
+        undoButton.addActionListener(e -> undo());//undo button
         calculateButton.addActionListener(e -> { //record button
             tinp_state();// update time input area, 
             History_record();   //record history
             clear();            //clear input area and result area
             update_CHB_states();//enable clear_history button
         });
-        clearHisButton.addActionListener(e->{
+        clearHisButton.addActionListener(e->{//clear history button
             Clear_History();//clear record
             update_CHB_states();//disable clear_history button
             clear();//clear input area and result area
         });
-        Selector1.addActionListener(e -> {
+        Selector1.addActionListener(e -> {//income or expenditure selector
             if (Selector1.getSelectedItem().equals(n2.get(0))) {//"Income"
                 collum1Label.setText(n1.get(0));//'Loans'
                 collum2Label.setText(n1.get(1));//'Wages'
@@ -108,27 +109,27 @@ public class BudgetTool extends JPanel {
                 collum3Label.setText(n1.get(4));//'Other'
             }
         });
-        Selector2.addActionListener(e -> {
+        Selector2.addActionListener(e -> {//time(now or other) selector
             tinp_state();//if pick "now", it will set input area to current time and disable input area
         });
 
-        his_edit_Button.addActionListener(e ->{
+        his_edit_Button.addActionListener(e ->{//not in use
             his_finish_edit_Button.setEnabled(true);
             his_edit_Button.setEnabled(false);
         });
-        his_finish_edit_Button.addActionListener(e ->{
+        his_finish_edit_Button.addActionListener(e ->{//not in use
             his_finish_edit_Button.setEnabled(false);
             his_edit_Button.setEnabled(true);
         });
-        freqSelector1.addActionListener(e -> calculate());
-        freqSelector2.addActionListener(e -> calculate());
-        freqSelector3.addActionListener(e -> calculate());
+        freqSelector1.addActionListener(e -> calculate());//frequency selector 1
+        freqSelector2.addActionListener(e -> calculate());//frequency selector 2
+        freqSelector3.addActionListener(e -> calculate());//frequency selector 3
         // DocumentListener
-        input_listener(numInput1, errorLable1);
-        input_listener(numInput2, errorLable2);
-        input_listener(numInput3, errorLable3);
-        input_listener(numInput4, errorLabel4);
-        input_listener(collum3Label, errorLable3); // 为 "Other" 标签输入框添加监听器
+        input_listener(numInput1, errorLable1);//value input listener 1
+        input_listener(numInput2, errorLable2);//value input listener 2
+        input_listener(numInput3, errorLable3);//value input listener 3
+        input_listener(numInput4, errorLabel4);//type input listener 
+        input_listener(collum3Label, errorLable3); //time(other) input listener
         //
         update_calculate_button_state(); //initial state
         update_CHB_states();          //initial state
@@ -225,9 +226,11 @@ public class BudgetTool extends JPanel {
         //group(7)
         his_Label = new JLabel("History",JLabel.CENTER);
         addComponent(his_Label, Integer.parseInt(n3.get(7)), 0, 5);
-        his_edit_Button = new JButton("Edit");
+        his_edit_Button = new JButton("Edit");// not in use
+        his_edit_Button.setEnabled(false);
         addComponent(his_edit_Button, Integer.parseInt(n3.get(7)), 3, 1);
-        his_finish_edit_Button = new JButton("Finish");
+        his_finish_edit_Button = new JButton("Finish");// not in use
+        his_finish_edit_Button.setEnabled(false);
         addComponent(his_finish_edit_Button, Integer.parseInt(n3.get(7)), 4, 1);
 
         //group(8)
@@ -236,9 +239,8 @@ public class BudgetTool extends JPanel {
         historyTable = new JTable(historyTableModel);
         historyTable.setFillsViewportHeight(true);
         JTableHeader header = historyTable.getTableHeader();
-        header.setFont(header.getFont().deriveFont(Font.BOLD, 14f)); // set font size
-        historyTable.setRowHeight(25); // set row height to match the new header size
-
+        header.setFont(header.getFont().deriveFont(Font.BOLD, 14f));//set title size
+        historyTable.setRowHeight(25);//
         JScrollPane scrollPane = new JScrollPane(historyTable);
         addComponent(scrollPane, Integer.parseInt(n3.get(8)), 0, 5, 10);
     }
@@ -247,18 +249,18 @@ public class BudgetTool extends JPanel {
         String text1 = numInput1.getText();
         String text2 = numInput2.getText();
         String text3 = numInput3.getText();
-        boolean at_least_one_non_empty = !text1.isEmpty() || !text2.isEmpty() || !text3.isEmpty();
+        boolean at_least_one_non_empty = !text1.isEmpty() || !text2.isEmpty() || !text3.isEmpty();//check all value input are not null
         boolean all_non_empty_are_valid =
-                error_check(text1) && error_check(text2) && error_check(text3);
+                error_check(text1) && error_check(text2) && error_check(text3);                   //check all value input are valid
         calculateButton.setEnabled(at_least_one_non_empty && all_non_empty_are_valid && !Undoing && input_time_check() && collum_label_valid());
     }
     private boolean error_check(String num){        //under error_massage() -> input_checker()
-        if (num.isEmpty()){
+        if (num.isEmpty()){ //accept empty 
             return true;
         }
         try {
-            Double.valueOf(num);
-            return Double.parseDouble(num) != 0;
+            Double.valueOf(num);    // check number or not
+            return Double.parseDouble(num) != 0; //reject value = 0
         } catch (NumberFormatException e) {
             return false;
         }
@@ -326,27 +328,27 @@ public class BudgetTool extends JPanel {
     //state change and error check
 
     //undo
-    private void set_previous_text(int row_num, String freq, String type, String value){//need to based on frequency to chnage the value back!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private void set_previous_text(int row_num, String freq, String type, String value){//based on previous selection and input value to set previous text and selection
         switch (row_num) {
-            case 1 -> {
+            case 1 -> {                                                                 //for 1st row
                 numInput1.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector1.setSelectedItem(freq);
             }
-            case 2 -> {
+            case 2 -> {                                                                 //for 2nd row
                 numInput2.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector2.setSelectedItem(freq);
             }
-            case 3 -> {
+            case 3 -> {                                                                 //for 3rd row
                 numInput3.setText(anti_normalize(Double.parseDouble(value), freq));
                 freqSelector3.setSelectedItem(freq);
                 collum3Label.setText(type);
             }
-            default -> System.out.println("error for undo(set_previous_text)");//only for debug
+            default -> System.out.println("error for undo(set_previous_text)");//only for debug, normally should not be happen
         }
     }
     private void undo_selection_and_time_part(){ //done recently
-        if (selection_Records.size() < 2 && historyTableModel.getRowCount() <=0){// prevent undo when no previous selection
-            System.err.println("No previous selection, no need to undo");
+        if (selection_Records.size() < 2 && historyTableModel.getRowCount() <=0){// prevent undo when no previous selection and history
+            System.err.println("No previous selection, no need to undo");     // should not be happen since button will disable when no histry record
             return;
         }
         String time_undo = historyTableModel.getValueAt(historyTableModel.getRowCount() -1, 0).toString(); // time in history table
@@ -372,47 +374,46 @@ public class BudgetTool extends JPanel {
 
     }
     private void undo_input_part(){
-        int lastTransactionSize = run_timeList.get(run_timeList.size() - 1);
-        for (int i = 0; i < lastTransactionSize; i++) {
+        int last_Transaction_Size = run_timeList.get(run_timeList.size() - 1);
+        for (int i = 0; i < last_Transaction_Size; i++) {//max should be 3
             int lastRowIndex = historyTableModel.getRowCount() - 1;
-            if (lastRowIndex < 0) break; // Safety break
+            if (lastRowIndex < 0) break; // prevent index out of bound
 
-            String freq_undo = historyTableModel.getValueAt(lastRowIndex, 1).toString();
-            String type_undo = historyTableModel.getValueAt(lastRowIndex, 2).toString();
-            String value_str_undo = historyTableModel.getValueAt(lastRowIndex, 3).toString();
+            String freq_undo = historyTableModel.getValueAt(lastRowIndex, 1).toString();//get frequency 
+            String type_undo = historyTableModel.getValueAt(lastRowIndex, 2).toString();//get type(income or expenditure)
+            String value_str_undo = historyTableModel.getValueAt(lastRowIndex, 3).toString();//get value
 
-            double value_to_undo = Double.parseDouble(value_str_undo);
-            total_balance -= value_to_undo;
+            double value_to_undo = Double.parseDouble(value_str_undo);//turn string to double
+            total_balance -= value_to_undo;//get previous total balance
 
-            int row_num_undo = his_row_number.get(his_row_number.size() - 1);
+            int row_num_undo = his_row_number.get(his_row_number.size() - 1);//get previous row number
 
-            String absolute_value_str = String.format("%.2f", Math.abs(value_to_undo));
-            set_previous_text(row_num_undo, freq_undo, type_undo, absolute_value_str);
+            String absolute_value_str = String.format("%.2f", Math.abs(value_to_undo));//format to 2 dp
+            set_previous_text(row_num_undo, freq_undo, type_undo, absolute_value_str);//set previous text and selection
 
-            historyTableModel.removeRow(lastRowIndex);
-            his_row_number.remove(his_row_number.size() - 1);
+            historyTableModel.removeRow(lastRowIndex);//remove last row
+            his_row_number.remove(his_row_number.size() - 1);//remove row number
         }
         run_timeList.remove(run_timeList.size() - 1);
     }
 
     private void undo(){
-        if (run_timeList.isEmpty()) return;
+        if (run_timeList.isEmpty()) return;//prevent undo when no previous transaction
         Undoing = true;//disable calculate(record) button
         clear();
-        undo_selection_and_time_part();
+        undo_selection_and_time_part();//set previous selection and time
         undo_input_part();//set previous input
         finance_update(total_balance);
         calculate();
         Undoing = false;//enable calculate(record) button
-        update_CHB_states();
-        update_calculate_button_state();
-
+        update_CHB_states();//set clean history button state
+        update_calculate_button_state(); //set calculate(record) button state
     }
     //undo
 
-    private double normalize(JTextField input, JComboBox<String> frequencySelector) { // need changes
+    private double normalize(JTextField input, JComboBox<String> frequencySelector) { //normalize input to weekly, monthly, yearly, or one-time
         String text = input.getText();
-        if (text.isEmpty()) {
+        if (text.isEmpty()) {//if empty, return 0
             return 0;
         }
         try {
@@ -434,7 +435,7 @@ public class BudgetTool extends JPanel {
         }
     }
 
-    private String anti_normalize(double value, String frequency) {
+    private String anti_normalize(double value, String frequency) { //denormalize value to original frequency   (dump function name, too late to realize)
         switch (frequency) {
             case "Per Week":
                 return String.format("%.2f", value / 4.333333333333333);
@@ -451,15 +452,15 @@ public class BudgetTool extends JPanel {
         numInput1.setText("");
         numInput2.setText("");
         numInput3.setText("");
-        collum3Label.setText(n1.get(4));
-        resultArea.setText("");
+        collum3Label.setText(n1.get(4));//(other)
+        resultArea.setText(""); //basicaly useless but keep it for not makeing any unexpecte bug
         if(Selector2.getSelectedItem().equals(n1.get(4))){ numInput4.setText("");}
         tinp_state();//if pick "now", it will update to current time, otherwise, it will keep the original time
         freqSelector1.setSelectedIndex(0);
         freqSelector2.setSelectedIndex(0);
         freqSelector3.setSelectedIndex(0);
         calculate();//since above code set each input to null, therefore resultArea will be +0.00 or -0.00
-        finance_update(total_balance);
+        finance_update(total_balance);//update total balance and label
     } 
 
     //calculate
@@ -469,27 +470,27 @@ public class BudgetTool extends JPanel {
         double num2 = normalize(numInput2, freqSelector2);
         double num3 = normalize(numInput3, freqSelector3);
         double total = num1 + num2 + num3;
-        if (seletion.equals("Income")){
+        if (seletion.equals("Income")){//if income, add + sign
             resultArea.setText(String.format("+%.2f", total));
             double tmep_total_balance = total_balance+total;
             finance_update(tmep_total_balance);
         } 
-        else if (seletion.equals("Expenditure")){
+        else if (seletion.equals("Expenditure")){//if expenditure, add - sign
             resultArea.setText(String.format("-%.2f", total));
             double tmep_total_balance = total_balance-total;
             finance_update(tmep_total_balance);
         }
     }
-    private double differenc(double num){//number, return balance
+    private double differenc(double num){//number, return balance   (should not be seperated but too late to realize, basically unable to change)
         return total_balance+=num;
     }
     //calculate
 
     //Histry
     private void History_record(){
-        int run_time=0; // to know how many input has been recorded
+        int run_time=0; //to know how many input has been recorded
         String seletion = (String) Selector1.getSelectedItem();
-        double sign = seletion.equals("Expenditure") ? -1 : 1;
+        double sign = seletion.equals("Expenditure") ? -1 : 1;  //if its "Expenditure", sign is -1 otherwise sign is 1
 
         double num1 = normalize(numInput1, freqSelector1);
         String type1 = collum1Label.getText();
@@ -520,9 +521,9 @@ public class BudgetTool extends JPanel {
         }
         run_timeList.add(run_time);//update how many input has been recorded
     }
-    private void History_record_template(String type, double num, double total, String freq, int row_number){//type, number, balance, frequency, row number(to store which row user input)
+    private void History_record_template(String type, double num, double total, String freq, int row_number){//type, number, balance, frequency, row number(to store which row user inputed)
         String time = tinp_state();
-        String value = String.format("%s%.2f", num > 0 ? "+" : "", num);
+        String value = String.format("%s%.2f", num > 0 ? "+" : "", num);//add + or - sign infont of number
         String totalStr = String.format("%.2f", total);
 
         historyTableModel.addRow(new Object[]{time, freq, type, value, totalStr});//store history
@@ -536,8 +537,7 @@ public class BudgetTool extends JPanel {
         //
         finance_update(total);
     }
-
-    private void Clear_History(){ 
+    private void Clear_History(){ //clear history table and reset total balance
         historyTableModel.setRowCount(0);
         total_balance=0;
         tol_balance_value_Label.setText("0.00");
@@ -547,8 +547,7 @@ public class BudgetTool extends JPanel {
     private void update_CHB_states(){//enable clear history button if history is not empty, same for undo button
         clearHisButton.setEnabled(historyTableModel.getRowCount() > 0);
         undoButton.setEnabled(historyTableModel.getRowCount() >0);
-    }// enable clear history button if history is not empty, same for undo button
-
+    }
     //HIstry
     
     //Time
@@ -562,8 +561,8 @@ public class BudgetTool extends JPanel {
     }
     private boolean input_time_check(){ //format check for time input
         try{
-            SimpleDateFormat formatter = new SimpleDateFormat(time_format);//set accept format
-            String input = numInput4.getText();//get input
+            SimpleDateFormat formatter = new SimpleDateFormat(time_format);
+            String input = numInput4.getText();
             formatter.parse(input); //parse input, if invalid format, will throw exception
             return true;
         }
@@ -572,24 +571,26 @@ public class BudgetTool extends JPanel {
         }
     }
     private String tinp_state(){ // return time input state, if user select "Now", return current time, else return input time, also used for inital state
-        if (Selector2.getSelectedItem().equals(n2.get(2))) {
+        if (Selector2.getSelectedItem().equals(n2.get(2))) {//if select 'Now' return current time
             numInput4.setText(Now_time());
             numInput4.setEditable(false);
             errorLabel4.setText("");
             return Now_time();
         } 
-        else if (Selector2.getSelectedItem().equals(n1.get(4))) {
+        else if (Selector2.getSelectedItem().equals(n1.get(4))) { //if select 'Other', set editable 
             numInput4.setEditable(true);
             errorLabel4.setText("Format:"+time_format);
             return edited_time();
         }
         else {
-            collum3Label.setText(n1.get(4));
+            collum3Label.setText(n1.get(4));//should not be happen, return current time to prevent unexpected error
             return Now_time();
         }
 
     }
     //Time
+
+    //Fianace 
     private void finance_update(double total){
         String totalStr_temp= String.format("%.2f", total);  
         tol_balance_value_Label.setText(totalStr_temp);  
@@ -604,6 +605,7 @@ public class BudgetTool extends JPanel {
             tol_balance_value_Label.setForeground(Color.RED);
         }
     }
+    //Fianace
 
 //  no need to make any chenges
     private void addComponent(Component component, int row, int col, int width) {
