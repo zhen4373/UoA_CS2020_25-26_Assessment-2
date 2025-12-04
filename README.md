@@ -20,8 +20,8 @@
 ### Methods:
 
 *   **List**:
-    *   `n1`: to store lable
-    *   `n2`: to store selection for Time and finance lable
+    *   `n1`: to store lable for income and expendature
+    *   `n2`: to store lable for Time and finance
     *   `n3`: to store the position of each row in the UI
 
 *   **Function**:
